@@ -1,7 +1,5 @@
 package com.generation.lojagames.model;
 
-import java.math.BigDecimal;
-
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -9,16 +7,14 @@ import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.Positive;
-import javax.validation.constraints.Size;
+import javax.validation.constraints.NotNull;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @Entity
 @Table(name = "tb_produto")
 public class Produto {
-	
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
@@ -26,25 +22,25 @@ public class Produto {
 	@NotBlank(message = "O atributo nome é obrigatório!")
 	private String nome;
 	
-	@NotBlank
-	private String console;
+	@NotNull(message = "O atributo preço é obrigatório!")
+	private Float preco;
 	
-	@NotBlank
-	@Size(max = 1000, message = "O nome deve ter 1000 caracteres!")
-	private String descricao;
+	@NotNull(message = "O atributo quantidade é obrigatório")
+	private Long quantidade;
 	
-	@NotBlank
-	private int quantidade;
+	@NotBlank(message = "O atributo data é obrigatório")
+	private String lancamento;
 	
-	@JsonFormat(shape = JsonFormat.Shape.STRING)
-	@NotBlank
-	@Positive(message = "O preço deve ser maior do que zero!")
-	private BigDecimal preco;
-
 	@ManyToOne
 	@JsonIgnoreProperties("produto")
 	private Categoria categoria;
+	
+	@ManyToOne
+	@JsonIgnoreProperties("produto")
+	private Usuario usuario;
 
+	//Getters & Setters
+	
 	public Long getId() {
 		return id;
 	}
@@ -61,36 +57,28 @@ public class Produto {
 		this.nome = nome;
 	}
 
-	public String getConsole() {
-		return console;
-	}
-
-	public void setConsole(String console) {
-		this.console = console;
-	}
-
-	public String getDescricao() {
-		return descricao;
-	}
-
-	public void setDescricao(String descricao) {
-		this.descricao = descricao;
-	}
-
-	public int getQuantidade() {
-		return quantidade;
-	}
-
-	public void setQuantidade(int quantidade) {
-		this.quantidade = quantidade;
-	}
-
-	public BigDecimal getPreco() {
+	public Float getPreco() {
 		return preco;
 	}
 
-	public void setPreco(BigDecimal preco) {
+	public void setPreco(Float preco) {
 		this.preco = preco;
+	}
+
+	public Long getQuantidade() {
+		return quantidade;
+	}
+
+	public void setQuantidade(Long quantidade) {
+		this.quantidade = quantidade;
+	}
+
+	public String getLancamento() {
+		return lancamento;
+	}
+
+	public void setLancamento(String lancamento) {
+		this.lancamento = lancamento;
 	}
 
 	public Categoria getCategoria() {
@@ -99,6 +87,14 @@ public class Produto {
 
 	public void setCategoria(Categoria categoria) {
 		this.categoria = categoria;
+	}
+
+	public Usuario getUsuario() {
+		return usuario;
+	}
+
+	public void setUsuario(Usuario usuario) {
+		this.usuario = usuario;
 	}
 	
 	

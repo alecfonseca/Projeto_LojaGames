@@ -22,58 +22,31 @@ import com.generation.lojagames.repository.CategoriaRepository;
 import com.generation.lojagames.repository.ProdutoRepository;
 
 @RestController
-@RequestMapping("/produto")
+@RequestMapping("/produtos")
 @CrossOrigin(origins = "*", allowedHeaders = "*")
 public class ProdutoController {
+
+	@Autowired
+	private ProdutoRepository produtoRepository;
 	
 	@Autowired
 	private CategoriaRepository categoriaRepository;
 	
-	@Autowired
-	private ProdutoRepository produtoRepository;
-	
-	@GetMapping("/nome/{nome}")
-	public ResponseEntity<List<Produto>> getByNome(@PathVariable String nome) {
-		return ResponseEntity.ok(produtoRepository.findAllByNomeContainingIgnoreCase(nome));
+	@GetMapping("/all")
+	public ResponseEntity<List<Produto>> findAllProduto() {
+		return ResponseEntity.ok(produtoRepository.findAll());
 	}
 	
 	@GetMapping("/{id}")
-	public ResponseEntity<Produto> getById(@PathVariable Long id) {
-		return produtoRepository.findById(id) 
+	public ResponseEntity<Produto> findByIdProduto(@PathVariable Long id) {
+		return produtoRepository.findById(id)
 				.map(resposta -> ResponseEntity.ok(resposta))
 				.orElse(ResponseEntity.notFound().build());
 	}
-
-	@GetMapping("/titulo/{titulo}") 
-	public ResponseEntity<List<Produto>> getByTitulo(@PathVariable String nome) {
+	
+	@GetMapping("/nome/{nome}")
+	public ResponseEntity<List<Produto>> findByNomeProduto (@PathVariable String nome){
 		return ResponseEntity.ok(produtoRepository.findAllByNomeContainingIgnoreCase(nome));
-	} 
-
-	@PostMapping
-	public ResponseEntity<Produto> postPostagem(@Valid @RequestBody Produto produto) {
-		if (categoriaRepository.existsById(produto.getCategoria().getId()))
-			return ResponseEntity.status(HttpStatus.CREATED).body(produtoRepository.save(produto));
-
-		return ResponseEntity.notFound().build();
-	}
-
-	@PutMapping
-	public ResponseEntity<Produto> putProduto(@Valid @RequestBody Produto produto) {
-		if (categoriaRepository.existsById(produto.getCategoria().getId())) {
-			return produtoRepository.findById(produto.getId())
-					.map(resposta -> ResponseEntity.status(HttpStatus.OK).body(produtoRepository.save(produto)))
-					.orElse(ResponseEntity.notFound().build());
-		}
-		return ResponseEntity.notFound().build();
-
-	}
-
-	@DeleteMapping("/{id}")
-	public ResponseEntity<Object> deletePostagem(@PathVariable Long id) { 
-		return produtoRepository.findById(id).map(resposta -> {
-			produtoRepository.deleteById(id);
-			return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
-		}).orElse(ResponseEntity.notFound().build());
 	}
 	
 	@GetMapping("/maior/{preco}")
@@ -84,5 +57,32 @@ public class ProdutoController {
 	@GetMapping("/menor/{preco}")
 	public ResponseEntity<List<Produto>> findByMenorQue (@PathVariable Float preco){
 		return ResponseEntity.ok(produtoRepository.findAllByPrecoLessThanOrderByPreco(preco));
+	}
+	
+	@PostMapping
+	public ResponseEntity<Produto> postProduto(@Valid @RequestBody Produto produto) {
+		if(categoriaRepository.existsById(produto.getCategoria().getId()))
+		return ResponseEntity.status(HttpStatus.CREATED).body(produtoRepository.save(produto));
+		
+		return ResponseEntity.notFound().build();
+	}
+	
+	@PutMapping
+	public ResponseEntity<Produto> putProduto(@Valid @RequestBody Produto produto) {
+		if(categoriaRepository.existsById(produto.getCategoria().getId())) {
+			return produtoRepository.findById(produto.getId())
+					.map(resposta -> ResponseEntity.status(HttpStatus.OK).body(produtoRepository.save(produto)))
+					.orElse(ResponseEntity.notFound().build());
+		}
+		return ResponseEntity.notFound().build();
+	}
+	
+	@DeleteMapping("/{id}")
+	public ResponseEntity<Object> deleteProduto(@PathVariable Long id) {
+		return produtoRepository.findById(id).map(resposta -> {
+				produtoRepository.deleteById(id);
+				return ResponseEntity.status(HttpStatus.NO_CONTENT).build();})
+				.orElse(ResponseEntity.notFound().build());
+				
 	}
 }
